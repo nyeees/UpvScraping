@@ -107,7 +107,7 @@ function helpPanel(){
 	echo -e "\n\t ${purpleColour}-n)${endColour} ${grayColour}Filtrar por notas${endColour}"
 	echo -e "\n\t ${purpleColour}-o)${endColour} ${grayColour}Ordenar notas por criterio (${yellowColour}nota${endColour}${grayColour}/${yellowColour}año${endColour}${grayColour}/${endColour}${yellowColour}suspendidos${endColour}${grayColour}/${endColour}${yellowColour}percentil${endColour}${grayColour}). Ej: (${purpleColour}-c${endColour}${grayColour} "103122b.90184bd2"${endColour}${purpleColour} -n -o ${endColour}${grayColour}suspendidos)${endColour}"
 	echo -e "\n\t ${purpleColour}-a)${endColour} ${grayColour}Escoger un año ${endColour}${grayColour}. Ej: (${purpleColour}-c${endColour}${grayColour} "103122b.90184bd2"${endColour}${purpleColour} -n -a ${endColour}${grayColour}2021)${endColour}"
-	echo -e "\n\t ${purpleColour}-m)${endColour} ${grayColour}Analizar una asignatura ${endColour}${grayColour}. Ej: (${purpleColour}-c${endColour}${grayColour} "103122b.90184bd2"${endColour}${purpleColour} -m ${endColour}${grayColour}"Fisica I")\n${endColour}"
+	echo -e "\n\t ${purpleColour}-m)${endColour} ${grayColour}Analizar una asignatura ${endColour}${grayColour}. Ej: (${purpleColour}-c${endColour}${grayColour} "103122b.90184bd2"${endColour}${purpleColour} -m ${endColour}${grayColour}"Física I")\n${endColour}"
 
 
 }
@@ -122,7 +122,7 @@ function getCookie(){
 	
 	cookie=$(cat cookie.txt | grep "TDp" |awk 'NF{print$NF}')
 	if [ "$cookie" ];then
-		echo -e "\n${yellowColour}Advertencia[!]${endColour}${grayColour}: Se le va a proporcionar la cookie de sesion en breves, haz uso de ella con el parametro -c ${endColour}"
+		echo -e "\n${yellowColour}Advertencia[!]${endColour}${grayColour}: Se le va a proporcionar la cookie de sesión en breves, haz uso de ella con el parametro -c ${endColour}"
 		sleep 3 
 
 		echo -e "\n${grayColour}Cookie: ${endColour}${blueColour}$cookie${endColour}"
@@ -139,18 +139,18 @@ function notasInfo(){
 	cat notas.txt | grep "Unica " -B 1 | grep -v "Uni" | tr -d '(0123456789)' > asignaturas.txt
 	if [ "$option" == "nota" ];then
 
-		echo -e "\n\t${grayColour}A continuacion se ordenara por ${endColour}${yellowColour}nota${endColour}"
+		echo -e "\n\t${grayColour}A continuación se ordenará por ${endColour}${yellowColour}nota${endColour}"
 	elif [ "$option" == "percentil" ];then
-		echo -e "\n\t${grayColour}A continuacion se ordenara por ${endColour}${yellowColour}percentil ${endColour}"
+		echo -e "\n\t${grayColour}A continuación se ordenará por ${endColour}${yellowColour}percentil ${endColour}"
 	elif [ "$option" == "suspendidos" ];then
-		echo -e "\n\t${grayColour}A continuacion se ordenara por ${endColour}${yellowColour}suspendidos${endColour}"
+		echo -e "\n\t${grayColour}A continuación se ordenará por ${endColour}${yellowColour}suspendidos${endColour}"
 	elif [ "$option" == "año" ];then
-                  echo -e "\n\t${grayColour}A continuacion se ordenara por ${endColour}${yellowColour}año${endColour}"	
+                  echo -e "\n\t${grayColour}A continuación se ordenará por ${endColour}${yellowColour}año${endColour}"	
 	elif [ "$option" ];then
-		echo -e "\n\t${grayColour}Opcion incorrecta${endColour}\n"
+		echo -e "\n\t${grayColour}Opción incorrecta${endColour}\n"
 		ctrl_c
 	else
-		echo -e "\n\t${grayColour}A continuacion se mostraran las asignaturas del año ${endColour}${yellowColour}${year}${endColour}"
+		echo -e "\n\t${grayColour}A continuación se mostrarán las asignaturas del año ${endColour}${yellowColour}${year}${endColour}"
 		cat notas.txt | grep "${year}  Unica" -B 1 | grep -v "Uni" | tr -d '(0123456789)' > asignaturas.txt
 	fi
 
@@ -246,11 +246,11 @@ function asignaturaInfo(){
 	fi
 
 	if [ "$nota" -eq "10" ];then
-		echo -e "\n${grayColour}Dioss tienes un ${endColour}${yellowColour}$nota${endColour}${grayColour}. Esto es la perfeccion, mis mas sinceros respetos..."
+		echo -e "\n${grayColour}Dioss tienes un ${endColour}${yellowColour}$nota${endColour}${grayColour}. Esto es la perfección, mis mas sinceros respetos..."
 		sleep 3
 		echo -e "\nAunque..."
 		sleep 3 
-		echo -e "\nA lo mejor deberias dedicar mas tiempo a otras cosas..."
+		echo -e "\nA lo mejor deberías dedicar mas tiempo a otras cosas..."
 		sleep 3 
 		echo -e "\nComo a aprender${redColour} BASH${endColour}"
 		sleep 3 
@@ -269,7 +269,7 @@ function asignaturaInfo(){
 		else	
 			echo -e "\n${grayColour}Un percentil de ${percentil}..."
 			sleep 3 
-                  	echo -e "\nA lo mejor deberias dudar de lo que representa esa nota..."
+                  	echo -e "\nA lo mejor deberías dudar de lo que representa esa nota..."
 			sleep 3                                                                                                                                        
                         echo -e "\n\t:)\n" 
 		fi
@@ -290,7 +290,7 @@ function asignaturaInfo(){
                 else    
                         echo -e "\n${grayColour}Un percentil de ${percentil}..."                                   
                         sleep 3                                                                                                                                        
-                        echo -e "\nA lo mejor deberias dudar de lo que representa esa nota..."                         
+                        echo -e "\nA lo mejor deberías dudar de lo que representa esa nota..."                         
                         sleep 3
 			echo -e "\n\t:)\n"                                                 
                 fi
@@ -313,29 +313,29 @@ function asignaturaInfo(){
                 else                                                                                                                                                     
                         echo -e "\n${grayColour}Un percentil de ${percentil}..."                                         
                         sleep 3                                                                                                                                          
-                        echo -e "\nA lo mejor deberias dudar de lo que representa esa nota..."                           
+                        echo -e "\nA lo mejor deberías dudar de lo que representa esa nota..."                           
                         sleep 3  
                         echo -e "\n\t:)\n"                                                   
                 fi
 	elif [ "$nota" -ge "4" ] && [ "$nota" -lt "5" ];then
 		echo -e "\n${grayColour} Un${endColour}${yellowColour}$nota${endColour}${grayColour}Que mala pata!"
                   sleep 3    
-                  echo -e "\nBueno, no te sientas mal, a lo mejor los demas tambien estan como tu..."    
+                  echo -e "\nBueno, no te sientas mal, a lo mejor los demás también están como tú..."    
                   sleep 3  
                   echo -e "\nVerdad?"    
                   sleep 3  
-                  echo -e "\nO eres el unico?"    
+                  echo -e "\nO eres el único?"    
                   sleep 3  
                   echo -e "\n${grayColour}Veamos el percentil...\n"    
                   if [ "$percentil" -gt "30" ];then  
-                        echo -e "\n${grayColour}Un percentil de ${endColour}${yellowColour}${percentil}${endColour}${grayColour}, pues si que era dificil la asignatura"    
+                        echo -e "\n${grayColour}Un percentil de ${endColour}${yellowColour}${percentil}${endColour}${grayColour}, pues si que era difícil la asignatura"    
                         exit 1
                   else
                         echo -e "\n${grayColour}Un percentil de ${percentil}..."                                           
                         sleep 3
-                        echo -e "\nPues tus companyeros tienen mejor nota..."                             
+                        echo -e "\nPues tus compañeros tienen mejor nota..."                             
                 	sleep 3    
-			echo -e "\nA la proxima sera"                                              
+			echo -e "\nA la próxima será"                                              
                         sleep 3
                         echo -e "\n\t\:\)\n"
 		  fi
@@ -365,10 +365,10 @@ done
 
 if [ $parameter_counter -eq 2 ];then
 	if [ "$option" ] && [ "$year" ];then
-		echo -e "\n${grayColour}Escoge un criterio de ordenamiento con el parametro ${purpleColour}-o${endColour}${grayColour}. O filtra por un año con el parametro${purpleColour} -a${endColour}${yellowColour}. PERO NO AMBOS!! ${endColour}\n"
+		echo -e "\n${grayColour}Escoge un criterio de ordenamiento con el parámetro ${purpleColour}-o${endColour}${grayColour}. O filtra por un año con el parametro${purpleColour} -a${endColour}${yellowColour}. PERO NO AMBOS!! ${endColour}\n"
 
 	elif [ ! "$option" ] && [ ! "$year" ];then
-		echo -e "\n${grayColour}Escoge un criterio de ordenamiento con el parametro ${purpleColour}-o${endColour}${grayColour}. O filtra por un año con el parametro${purpleColour} -a${endColour} \n"
+		echo -e "\n${grayColour}Escoge un criterio de ordenamiento con el parámetro ${purpleColour}-o${endColour}${grayColour}. O filtra por un año con el parametro${purpleColour} -a${endColour} \n"
 		ctrl_c
 	else
 	
@@ -378,7 +378,7 @@ if [ $parameter_counter -eq 2 ];then
 	if [ "$(echo $?)" -eq 0 ];then
 		notasInfo
 	else
-		echo -e "${redColour}\nError ${endColour}${grayColour}Proporciona una cookie de sesion valida. Si no la tienes usa el parametro -g "
+		echo -e "${redColour}\nError ${endColour}${grayColour}Proporciona una cookie de sesión válida. Si no la tienes usa el parámetro -g "
 	fi
 	fi
 elif [ $parameter_counter -eq 3 ];then
@@ -391,7 +391,7 @@ elif [ $parameter_counter -eq 4 ];then
         if [ "$(echo $?)" -eq 0 ];then
         	asignaturaInfo ${asignaturaElegida} 
         else
-        	echo -e "${redColour}\nError ${endColour}${grayColour}Proporciona una cookie de sesion valida. Si no la tienes usa el parametro -g "
+        	echo -e "${redColour}\nError ${endColour}${grayColour}Proporciona una cookie de sesión válida. Si no la tienes usa el parámetro -g "
           fi
 else
 	helpPanel
