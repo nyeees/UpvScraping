@@ -3,6 +3,8 @@ Pasos a seguir:
 
 git clone https://github.com/nyeees/UpvScraping
 
+cd UpvScraping
+
 chmod +x main.sh
 
 
