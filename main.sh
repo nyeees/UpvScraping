@@ -102,14 +102,18 @@ function trimString(){
 trap ctrl_c INT
 function helpPanel(){
 	echo -e "\n ${grayColour}Panel de ayuda:${endColour}"
+	echo -e "\n\t ${purpleColour}-g)${endColour} ${grayColour}Obtener cookie a partir de DNI y contraseña. Ej:(${purpleColour}-g${endColour}${grayColour} \"89103629 8901\")${endColour}"
+	echo -e "\n\t ${purpleColour}-c)${endColour} ${grayColour}Introducir cookie. Ej: (${purpleColour}-c${endColour}${grayColour} "103122b.90184bd2")${endColour}"
 	echo -e "\n\t ${purpleColour}-n)${endColour} ${grayColour}Filtrar por notas${endColour}"
-	echo -e "\n\t ${purpleColour}-a)${endColour} ${grayColour}Escoger un año ${endColour}"
-	echo -e "\n\t ${purpleColour}-g)${endColour} ${grayColour}Obtener cookie a partir de usuario y contraseña. Ej:${endColour}(-g \"usuario contraseña\")"
+	echo -e "\n\t ${purpleColour}-o)${endColour} ${grayColour}Ordenar notas por criterio (${yellowColour}nota${endColour}${grayColour}/${yellowColour}año${endColour}${grayColour}/${endColour}${yellowColour}suspendidos${endColour}${grayColour}/${endColour}${yellowColour}percentil${endColour}${grayColour}). Ej: (${purpleColour}-c${endColour}${grayColour} "103122b.90184bd2"${endColour}${purpleColour} -n -o ${endColour}${grayColour}suspendidos)${endColour}"
+	echo -e "\n\t ${purpleColour}-a)${endColour} ${grayColour}Escoger un año ${endColour}${grayColour}. Ej: (${purpleColour}-c${endColour}${grayColour} "103122b.90184bd2"${endColour}${purpleColour} -n -a ${endColour}${grayColour}2021)${endColour}"
+	echo -e "\n\t ${purpleColour}-m)${endColour} ${grayColour}Analizar una asignatura ${endColour}${grayColour}. Ej: (${purpleColour}-c${endColour}${grayColour} "103122b.90184bd2"${endColour}${purpleColour} -m ${endColour}${grayColour}"Fisica I")\n${endColour}"
+
 
 }
 function ctrl_c(){
 	echo -e "${redColour}[!]Saliendo...${endColour}" 
-	(rm miasignatura.txt  asignaturas.txt notas.txt table.txt )  2>/dev/null
+	(rm miasignatura.txt  asignaturas.txt notas.txt table.txt cookie.txt )  2>/dev/null
 	exit 1
 }
 
@@ -126,11 +130,13 @@ function getCookie(){
 		echo -e "\n${redColour}[!]${endColour} ${grayColour}Usuario o contraseña incorrecta${endColour}"
 
 	fi
+	(rm cookie.txt) 2>/dev/null 
 }
 
 function notasInfo(){
 
 
+	cat notas.txt | grep "Unica " -B 1 | grep -v "Uni" | tr -d '(0123456789)' > asignaturas.txt
 	if [ "$option" == "nota" ];then
 
 		echo -e "\n\t${grayColour}A continuacion se ordenara por ${endColour}${yellowColour}nota${endColour}"
@@ -138,13 +144,16 @@ function notasInfo(){
 		echo -e "\n\t${grayColour}A continuacion se ordenara por ${endColour}${yellowColour}percentil ${endColour}"
 	elif [ "$option" == "suspendidos" ];then
 		echo -e "\n\t${grayColour}A continuacion se ordenara por ${endColour}${yellowColour}suspendidos${endColour}"
+	elif [ "$option" == "año" ];then
+                  echo -e "\n\t${grayColour}A continuacion se ordenara por ${endColour}${yellowColour}año${endColour}"	
+	elif [ "$option" ];then
+		echo -e "\n\t${grayColour}Opcion incorrecta${endColour}\n"
+		ctrl_c
 	else
-		echo -e "\n\t${redColour}Opcion incorrecta.[!]Saliendo...${endColour}\n"
-		exit 1
-
+		echo -e "\n\t${grayColour}A continuacion se mostraran las asignaturas del año ${endColour}${yellowColour}${year}${endColour}"
+		cat notas.txt | grep "${year}  Unica" -B 1 | grep -v "Uni" | tr -d '(0123456789)' > asignaturas.txt
 	fi
 
-	cat notas.txt | grep "Unica " -B 1 | grep -v "Uni" | tr -d '(0123456789)' > asignaturas.txt
 	asignaturas=$(cat notas.txt | grep -i "Unica " -A 1 | grep -vE "Unic" | tr -d '(0123456789)')
 
 	echo -e "${grayColour}"
@@ -183,7 +192,6 @@ function notasInfo(){
 			miAsignatura=$(cat notas.txt | grep -i "Unica " -B 1 | grep "${sortedNota[counter]}" -B 1 | grep -vE "\-|Unica" | tr -d '(0123456789)'| sed -n ${counterAsignatura}p)
 
 			echo "$(cat notas.txt | grep -i "Unica " -B 1 | grep "${sortedNota[counter]}" -B 1 | grep "^[[:digit:]]" | awk '{print$1}' | sed -n ${counterAsignatura}p)_$(cat notas.txt | grep -i "Unica " -B 1 | grep "${sortedNota[counter]}" -B 1 | grep -vE "\-|Unica" | tr -d '(0123456789)'| sed -n ${counterAsignatura}p)_${sortedNota[counter]}_$(cat notas.txt | grep -i "$miAsignatura" -A 1 | tail -n 1 | awk '{print$3}')_$(cat notas.txt | grep -i "$miAsignatura" -A 1 | tail -n 1 | awk '{print$7}')" >> table.txt
-		#cat table.txt
 	
 		elif [ "$option" == "año" ];then
 			
@@ -198,7 +206,7 @@ function notasInfo(){
                         fi
 			
 			asignaturaPerc=$(cat notas.txt | grep "Asignatura .* ${sortedPercentil[counter]} " -B 1 | grep -vE "Asig|\-" | tr -d '(0123456789)' | sed -n ${counterAsignatura}p)
-			echo "$(cat notas.txt | grep -m 1  "${asignatura}" -A 1 | tail -n 1 | awk '{print$1}')_${asignaturaPerc}_$(cat notas.txt | grep -m 1  "${asignaturaPerc}" -A 1 | tail -n 1 | awk '{print$4}')_${sortedPercentil[counter]}_$(cat notas.txt | grep   -i "Alumnos percentil" -A 100 | grep "${asignaturaPerc}" -A 1 | tail -n 1 | awk '{print$7}')" >> table.txt	
+			echo "$(cat notas.txt | grep -m 1  "${asignaturaPerc}" -A 1 | tail -n 1 | awk '{print$1}')_${asignaturaPerc}_$(cat notas.txt | grep -m 1  "${asignaturaPerc}" -A 1 | tail -n 1 | awk '{print$4}')_${sortedPercentil[counter]}_$(cat notas.txt | grep   -i "Alumnos percentil" -A 100 | grep "${asignaturaPerc}" -A 1 | tail -n 1 | awk '{print$7}')" >> table.txt	
 
 		elif [ "$option" == "suspendidos" ];then
 			if [ "${sortedSuspensos[counter]}" == "${sortedSuspensos[counter-1]}" ]; then
@@ -211,24 +219,143 @@ function notasInfo(){
 
 			echo "$(cat notas.txt | grep -m 1  "${asignaturaSusp}" -A 1 | tail -n 1 | awk '{print$1}')_${asignaturaSusp}_$(cat notas.txt | grep -m 1  "${asignaturaSusp}" -A 1 | tail -n 1 | awk '{print$4}')_$(cat notas.txt | grep -i "Alumnos percentil" -A 100 | grep "${asignaturaSusp}" -A 1 | tail -n 1 | awk '{print$3}')_${sortedSuspensos[counter]}" >> table.txt
 		
+		else
+
+			echo "${year}_${asignatura}_$(cat notas.txt | grep -m 1  "${asignatura}"   -A 1 | tail -n 1 | awk '{print$4}')_$(cat notas.txt | grep -i "Alumnos percentil" -A 100 | grep "${asignatura}" -A 1 | tail -n 1 | awk '{print$3}')_$(cat notas.txt | grep   -i "Alumnos percentil" -A 100 | grep "${asignatura}" -A 1 | tail -n 1 | awk '{print$7}')" >> table.txt # el problema esq la tabla se rellena n veces siendo n las asignaturas, habria que hacer otro while
 		fi
 	let counter+=1
 	done < asignaturas.txt
 		
+
 	printTable '_' "$(cat table.txt)"
 	echo -e "${endColour}"
-	(rm miasignatura.txt  asignaturas.txt notas.txt table.txt )  2>/dev/null
+	(rm notas.txt miasignatura.txt  asignaturas.txt  table.txt )  2>/dev/null
+}
+
+function asignaturaInfo(){
+	echo -e "\n${grayColour}Analizando${endColour} ${yellowColour}${asignaturaElegida}${endColour}"
+
+	nota=$(cat notas.txt | grep -m 1 -e "^${asignaturaElegida} " -A 1 | tail -n 1 | awk '{print$4}'| head -c 1)
+	#suspensos=$(cat notas.txt | grep  -e "^${asignaturaElegida} " -A 2 | grep "^Asig" | awk '{print$7}')
+	percentil=$(cat notas.txt | grep  -e "^${asignaturaElegida} " -A 2 | grep "^Asig" | awk '{print$3}')
+
+	if [ ! "$nota" ];then
+		echo -e "${redColour}\nEscoge una entre estas asignaturas:${endColour}\n"
+		echo -e "\n${grayColour}$(cat notas.txt | grep "^Asig" -B 1 | grep -vE "Asi|\-" | tr -d '(0123456789)')"
+		ctrl_c
+	fi
+
+	if [ "$nota" -eq "10" ];then
+		echo -e "\n${grayColour}Dioss tienes un ${endColour}${yellowColour}$nota${endColour}${grayColour}. Esto es la perfeccion, mis mas sinceros respetos..."
+		sleep 3
+		echo -e "\nAunque..."
+		sleep 3 
+		echo -e "\nA lo mejor deberias dedicar mas tiempo a otras cosas..."
+		sleep 3 
+		echo -e "\nComo a aprender${redColour} BASH${endColour}"
+		sleep 3 
+		echo -e "\n\t${grayColour}\:)n"
+		exit 1
+	elif [ "$nota" -ge "9" ];then
+		echo -e "\n${grayColour}Asombroso, sacaste un ${yellowColour}${nota}${endColour}${grayColour}. No mucha gente tiene esa nota..."
+		sleep 3
+		echo -e "\n${grayColour}Bueno, veamos el ${blueColour}percentil${endColour}${grayColour} para comparar"
+
+		if [ "$percentil" -gt "50" ];then
+			echo -e "\n${grayColour}Un percentil de ${percentil}, pues si que tienes buen percentil..."
+			sleep 3
+			echo -e "\nEnhorabuena"
+			exit 1
+		else	
+			echo -e "\n${grayColour}Un percentil de ${percentil}..."
+			sleep 3 
+                  	echo -e "\nA lo mejor deberias dudar de lo que representa esa nota..."
+			sleep 3                                                                                                                                        
+                        echo -e "\n\t:)\n" 
+		fi
+
+	elif [ "$nota" -ge "7" ] && [ "$nota" -lt "9" ];then
+		echo -e "\n${grayColour} Un ${endColour}${yellowColour}$nota${endColour}${grayColour}. Una muy buena nota."
+        	sleep 3
+                echo -e "\nEso significa que controlas de la materia..."
+        	sleep 3 
+                echo -e "\nVerdad?"
+                sleep 3 
+                echo -e "\nO es que todo el mundo ha sacado buena nota?"
+                sleep 3 
+                echo -e "\n${grayColour}Veamos el percentil..."
+		if [ "$percentil" -gt "50" ];then  
+                        echo -e "\n${grayColour}Un percentil de ${percentil}, pues si parece que controles..."
+                        exit 1
+                else    
+                        echo -e "\n${grayColour}Un percentil de ${percentil}..."                                   
+                        sleep 3                                                                                                                                        
+                        echo -e "\nA lo mejor deberias dudar de lo que representa esa nota..."                         
+                        sleep 3
+			echo -e "\n\t:)\n"                                                 
+                fi
+
+
+
+	elif [ "$nota" -ge "5" ] && [ "$nota" -lt "7" ];then
+		echo -e "\n${grayColour} Un ${endColour}${yellowColour}$nota${endColour}${grayColour} .No esta mal"
+                sleep 3  
+                echo -e "\nEso significa que controlas de la materia..."  
+                sleep 3   
+                echo -e "\nVerdad?"  
+                sleep 3   
+                echo -e "\nO es que todo el mundo ha sacado buena nota?"  
+                sleep 3                                                                                              
+                echo -e "\n${grayColour}Veamos el percentil..."  
+                if [ "$percentil" -gt "50" ];then    
+                        echo -e "\n${grayColour}Un percentil de ${percentil}, pues si parece que controles..."  
+                        exit 1                                                                                                                                           
+                else                                                                                                                                                     
+                        echo -e "\n${grayColour}Un percentil de ${percentil}..."                                         
+                        sleep 3                                                                                                                                          
+                        echo -e "\nA lo mejor deberias dudar de lo que representa esa nota..."                           
+                        sleep 3  
+                        echo -e "\n\t:)\n"                                                   
+                fi
+	elif [ "$nota" -ge "4" ] && [ "$nota" -lt "5" ];then
+		echo -e "\n${grayColour} Un${endColour}${yellowColour}$nota${endColour}${grayColour}Que mala pata!"
+                  sleep 3    
+                  echo -e "\nBueno, no te sientas mal, a lo mejor los demas tambien estan como tu..."    
+                  sleep 3  
+                  echo -e "\nVerdad?"    
+                  sleep 3  
+                  echo -e "\nO eres el unico?"    
+                  sleep 3  
+                  echo -e "\n${grayColour}Veamos el percentil...\n"    
+                  if [ "$percentil" -gt "30" ];then  
+                        echo -e "\n${grayColour}Un percentil de ${endColour}${yellowColour}${percentil}${endColour}${grayColour}, pues si que era dificil la asignatura"    
+                        exit 1
+                  else
+                        echo -e "\n${grayColour}Un percentil de ${percentil}..."                                           
+                        sleep 3
+                        echo -e "\nPues tus companyeros tienen mejor nota..."                             
+                	sleep 3    
+			echo -e "\nA la proxima sera"                                              
+                        sleep 3
+                        echo -e "\n\t\:\)\n"
+		  fi
+	else
+		echo -e "\n${grayColour} Un ${endColour}${yellowColour}$nota${endColour}${grayColour}. Ale, a repetir curso que no tienes ni idea"
+		sleep 3
+        	echo -e "\n\t:)\n"
+	fi
 }
 
 
 declare -i parameter_counter=0
-while getopts "a:ng:c:o:h" arg; do
+while getopts "a:ng:c:o:hm:" arg; do
 	case $arg in
 		c)cookie_in=$OPTARG;;
 		n)let parameter_counter+=2;;
 		o)option=$OPTARG;;
 		a)year=$OPTARG;;
 		g)userPass=($OPTARG);let parameter_counter+=3;; #Escribe el nombre y contra entre ""
+		m)asignaturaElegida=$OPTARG; let parameter_counter+=4;;
 		h);;
 	esac
 done
@@ -237,6 +364,14 @@ done
 
 
 if [ $parameter_counter -eq 2 ];then
+	if [ "$option" ] && [ "$year" ];then
+		echo -e "\n${grayColour}Escoge un criterio de ordenamiento con el parametro ${purpleColour}-o${endColour}${grayColour}. O filtra por un año con el parametro${purpleColour} -a${endColour}${yellowColour}. PERO NO AMBOS!! ${endColour}\n"
+
+	elif [ ! "$option" ] && [ ! "$year" ];then
+		echo -e "\n${grayColour}Escoge un criterio de ordenamiento con el parametro ${purpleColour}-o${endColour}${grayColour}. O filtra por un año con el parametro${purpleColour} -a${endColour} \n"
+		ctrl_c
+	else
+	
 	curl -s --cookie "TDp=$cookie_in" -d "p_curso=1" "https://intranet.upv.es/pls/soalu/sic_asi.notes_temaalu_asi" | html2text > notas.txt
 	(cat notas.txt | grep -i "suspendidos") &>/dev/null
 	
@@ -245,8 +380,19 @@ if [ $parameter_counter -eq 2 ];then
 	else
 		echo -e "${redColour}\nError ${endColour}${grayColour}Proporciona una cookie de sesion valida. Si no la tienes usa el parametro -g "
 	fi
+	fi
 elif [ $parameter_counter -eq 3 ];then
 	getCookie
+elif [ $parameter_counter -eq 4 ];then
+
+	curl -s --cookie "TDp=$cookie_in" -d "p_curso=1" "https://intranet.upv.es/pls/soalu/sic_asi.notes_temaalu_asi" | html2text > notas.txt
+        (cat notas.txt | grep -i "suspendidos") &>/dev/null
+          
+        if [ "$(echo $?)" -eq 0 ];then
+        	asignaturaInfo ${asignaturaElegida} 
+        else
+        	echo -e "${redColour}\nError ${endColour}${grayColour}Proporciona una cookie de sesion valida. Si no la tienes usa el parametro -g "
+          fi
 else
 	helpPanel
 fi
