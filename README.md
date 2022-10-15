@@ -1,5 +1,8 @@
 # UpvScraping
-Pasos a seguir:
+UpvScraping es una herramienta dirigida a alumnos de la UPV que quieran obtener información que se encuentra en la intranet de la UPV.
+Actualmente tiene información exclusívamente de las notas
+
+# Pasos a seguir:
 
 git clone https://github.com/nyeees/UpvScraping
 
