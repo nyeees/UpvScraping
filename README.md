@@ -8,8 +8,15 @@ git clone https://github.com/nyeees/UpvScraping
 
 cd UpvScraping
 
+sudo su
+
 chmod +x main.sh
 
 
-#Fácil de utilizar, ver panel de ayuda ejecutando:
+Fácil de utilizar, ver panel de ayuda ejecutando:
 ./main
+
+
+
+
+En el caso de no querer dar permisos como root, cambiar el propietario del ejecutable con el comando chown
